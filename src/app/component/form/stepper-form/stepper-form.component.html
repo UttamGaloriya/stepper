@@ -1,6 +1,5 @@
 <div class="container">
-    <!-- <app-tabs></app-tabs> --> <mat-card>
-
+    <mat-card>
         <mat-horizontal-stepper linear #stepper (selectionChange)="changeStep($event)">
             <!-- step 1  -->
             <mat-step [stepControl]="getProjectDetails">
@@ -98,8 +97,6 @@
                             </mat-error>
                         </mat-form-field>
                     </div>
-
-
                     <div class="file-upload">
                         <input type="file" (change)="onFileChange($event)" multiple formControlName="projectFile" style="display:none;" id="img">
                         <label for="img" class="upload-img">Click me to upload image</label>
@@ -118,7 +115,7 @@
                     </div>
                     <div class="next-step-button">
                         <button mat-flat-button matStepperPrevious color="primary">Back</button>
-                        <button mat-flat-button matStepperNext color="primary">Next</button>
+                        <button mat-flat-button matStepperNext color="primary" [disabled]="getFileName">Next</button>
                     </div>
                 </form>
             </mat-step>

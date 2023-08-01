@@ -12,6 +12,7 @@ import { ProjectService } from 'src/app/services/project.service';
 export class StepperFormComponent {
   @ViewChild('stepper') stepper!: MatStepper;
   submitText: string = 'FINISH'
+  titleText: string = 'dfsg'
   projectForm!: FormGroup;
   projectDetailsForm!: FormGroup;
   reader = new FileReader();
@@ -49,7 +50,6 @@ export class StepperFormComponent {
         }, {
           validator: this.ageValidator('minimum', 'maximum')
         }),
-        projectName: ['', Validators.required],
         projectFile: [Validators.required],
         projectCost: this.fb.array([this.projectCost()]),
         projectIncludes: this.fb.array([this.projectIncludes()]),
@@ -76,6 +76,13 @@ export class StepperFormComponent {
   }
   get getProjectDetails() {
     return this.projectForm.get('projectDetails') as FormGroup;
+  }
+  get getFileName() {
+    let file = this.projectForm.get('projectFile')?.value.name
+    if (file == 'required') {
+      return true
+    }
+    return false
   }
   //project 
   projectCost() {
@@ -140,13 +147,12 @@ export class StepperFormComponent {
     this.projectForm.get('projectFile')?.setValue(this.image)
   }
 
-  projectNameFunction(event: any) {
-    this.projectForm.get('projectName')?.setValue(event.value)
-  }
+
 
   submit() {
 
     if (this.ProjectId >= 0) {
+      this.getProjectDetails.get('title')?.enable()
       alert(`New Project with Id ${this.ProjectId} added successfully`)
       this.projectService.updateProject(this.projectForm.value, this.ProjectId)
     } else {
@@ -184,12 +190,15 @@ export class StepperFormComponent {
   }
 
   changeStep(event: any) {
-    console.log(event);
-    let value = this.getProjectDetails.get('title')?.value
-    console.log(value)
+    this.titleText = this.getProjectDetails.get('title')?.value
+    this.getProjectDetails.get('title')?.setValue(this.titleText)
+    this.titleText = this.getProjectDetails.get('title')?.value
+    console.log(event)
+    console.log(this.projectForm.get('projectFile'))
     this.getProjectDetails.get('title')?.disable()
-    if (event.selectedIndex == 0) {
+    if (event.selectedInde == 0) {
       this.getProjectDetails.get('title')?.enable()
     }
   }
+
 }
