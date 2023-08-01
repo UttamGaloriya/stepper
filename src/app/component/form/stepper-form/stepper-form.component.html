@@ -1,7 +1,7 @@
 <div class="container">
     <!-- <app-tabs></app-tabs> --> <mat-card>
 
-        <mat-stepper linear #stepper>
+        <mat-horizontal-stepper linear #stepper (selectionChange)="changeStep($event)">
             <!-- step 1  -->
             <mat-step [stepControl]="getProjectDetails">
                 <ng-template matStepLabel>Project Details</ng-template>
@@ -69,7 +69,6 @@
                             <mat-error *ngIf="this.projectForm.get('projectDetails.maximum')?.errors?.['confirmedValidator']">enter bigger then minimum age</mat-error>
                         </mat-form-field>
 
-
                         <mat-form-field class="example-full-width-100" appearance="fill">
                             <mat-label>Description</mat-label>
                             <textarea matInput formControlName="description"></textarea>
@@ -79,48 +78,49 @@
                         </mat-form-field>
 
                         <div class="next-step-button">
-                            <button mat-flat-button matStepperNext color="primary">Next</button>
+                            <button mat-flat-button matStepperNext color="primary" [disabled]="!getProjectDetails.valid">Next</button>
                         </div>
+
                     </div>
                 </form>
             </mat-step>
             <!-- step 2  -->
             <mat-step>
                 <ng-template matStepLabel>Project Gallery</ng-template>
-                <form [formGroup]="projectForm" class="second-page">
-                    <mat-form-field appearance="fill" class="example-full-width">
-                        <mat-label>Project Name</mat-label>
-                        <mat-select formControlName="projectName" (selectionChange)="projectNameFunction($event)">
-                            <mat-option *ngFor="let food of foods" [value]="food.value">
-                                {{food.viewValue}}
-                            </mat-option>
-                        </mat-select>
-                        <mat-error *ngIf="this.projectForm.get('projectName')?.hasError('required')">
-                            Please select an activity from the list
-                        </mat-error>
-                    </mat-form-field>
-                </form>
-
-                <div>
-                    <input type="file" (change)="onFileChange($event)" multiple formControlName="projectFile" style="display:none;" id="img">
-                    <label for="img" class="upload-img">Click me to upload image</label>
-                    <mat-error *ngIf="this.projectForm.get('projectFile')?.hasError('required')&& projectForm.get('projectFile')?.touched">
-                        Upload File
-                    </mat-error>
-
-                </div>
-                <div class="img-list">
-                    <div *ngFor="let img of image , let i=index" class="img-div">
-                        <img [src]="img" alt="not found" class="img-preview">
-                        <button mat-icon-button color="warn" aria-label="Example icon button with a heart icon" class="delete-img" (click)="removeImg(i)">
-                            <mat-icon>delete</mat-icon>
-                        </button>
+                <form [formGroup]="projectForm" class="first-page">
+                    <div formGroupName="projectDetails">
+                        <mat-form-field class="example-full-width" appearance="fill">
+                            <mat-label>Title</mat-label>
+                            <input matInput formControlName="title">
+                            <mat-error *ngIf="projectForm.get('projectDetails.title')?.invalid ">
+                                <span *ngIf="projectForm.get('projectDetails.title')?.errors?.['required']">Enter Title </span>
+                                <span *ngIf="projectForm.get('projectDetails.title')?.errors?.['spacesOnly'] && !projectForm.get('projectDetails.title')?.errors?.['required']">Title cannot be only spaces.</span>
+                            </mat-error>
+                        </mat-form-field>
                     </div>
-                </div>
-                <div class="next-step-button">
-                    <button mat-flat-button matStepperPrevious color="primary">Back</button>
-                    <button mat-flat-button matStepperNext color="primary">Next</button>
-                </div>
+
+
+                    <div class="file-upload">
+                        <input type="file" (change)="onFileChange($event)" multiple formControlName="projectFile" style="display:none;" id="img">
+                        <label for="img" class="upload-img">Click me to upload image</label>
+                        <mat-error *ngIf="this.projectForm.get('projectFile')?.hasError('required')&& projectForm.get('projectFile')?.touched">
+                            Upload File
+                        </mat-error>
+
+                    </div>
+                    <div class="img-list">
+                        <div *ngFor="let img of image , let i=index" class="img-div">
+                            <img [src]="img" alt="not found" class="img-preview">
+                            <button type="button" mat-icon-button color="warn" aria-label="Example icon button with a heart icon" class="delete-img" (click)="removeImg(i)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="next-step-button">
+                        <button mat-flat-button matStepperPrevious color="primary">Back</button>
+                        <button mat-flat-button matStepperNext color="primary">Next</button>
+                    </div>
+                </form>
             </mat-step>
             <!-- step 3  -->
             <mat-step [stepControl]="getProjectCost">
@@ -128,17 +128,18 @@
                 <form [formGroup]="projectForm" class="third-page">
                     <h2> Project cost</h2>
 
-                    <mat-form-field appearance="fill" class="example-full-width">
-                        <mat-label>Project Name</mat-label>
-                        <mat-select formControlName="projectName" (selectionChange)="projectNameFunction($event)">
-                            <mat-option *ngFor="let food of foods" [value]="food.value">
-                                {{food.viewValue}}
-                            </mat-option>
-                        </mat-select>
-                        <mat-error *ngIf="this.projectForm.get('projectName')?.hasError('required')">
-                            Please select an activity from the list
-                        </mat-error>
-                    </mat-form-field>
+
+                    <div formGroupName="projectDetails">
+                        <mat-form-field class="example-full-width" appearance="fill">
+                            <mat-label>Title</mat-label>
+                            <input matInput formControlName="title">
+                            <mat-error *ngIf="projectForm.get('projectDetails.title')?.invalid ">
+                                <span *ngIf="projectForm.get('projectDetails.title')?.errors?.['required']">Enter Title </span>
+                                <span *ngIf="projectForm.get('projectDetails.title')?.errors?.['spacesOnly'] && !projectForm.get('projectDetails.title')?.errors?.['required']">Title cannot be only spaces.</span>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
 
                     <div formArrayName="projectCost">
 
@@ -168,7 +169,7 @@
                 </form>
                 <div class="next-step-button">
                     <button mat-flat-button matStepperPrevious color="primary">Back</button>
-                    <button mat-flat-button matStepperNext color="primary">Next</button>
+                    <button mat-flat-button matStepperNext color="primary" [disabled]="!getProjectCost.valid">Next</button>
                 </div>
             </mat-step>
             <!-- step 4  -->
@@ -176,17 +177,16 @@
                 <ng-template matStepLabel>Project Includes</ng-template>
                 <form [formGroup]="projectForm" class="third-page">
                     <h2>Include Check</h2>
-                    <mat-form-field appearance="fill" class="example-full-width">
-                        <mat-label>Project Name</mat-label>
-                        <mat-select formControlName="projectName" (selectionChange)="projectNameFunction($event)">
-                            <mat-option *ngFor="let food of foods" [value]="food.value">
-                                {{food.viewValue}}
-                            </mat-option>
-                        </mat-select>
-                        <mat-error *ngIf="this.projectForm.get('projectName')?.hasError('required')">
-                            Please select an activity from the list
-                        </mat-error>
-                    </mat-form-field>
+                    <div formGroupName="projectDetails">
+                        <mat-form-field class="example-full-width" appearance="fill">
+                            <mat-label>Title</mat-label>
+                            <input matInput formControlName="title">
+                            <mat-error *ngIf="projectForm.get('projectDetails.title')?.invalid ">
+                                <span *ngIf="projectForm.get('projectDetails.title')?.errors?.['required']">Enter Title </span>
+                                <span *ngIf="projectForm.get('projectDetails.title')?.errors?.['spacesOnly'] && !projectForm.get('projectDetails.title')?.errors?.['required']">Title cannot be only spaces.</span>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
                     <div formArrayName="projectIncludes">
                         <div *ngFor="let includes of getProjectIncludes.controls;let i=index" [formGroupName]="i" class="cost-fild">
                             <mat-form-field class="example-full-width" appearance="fill" class="step-4">
@@ -216,7 +216,7 @@
                 </form>
                 <div class="next-step-button">
                     <button mat-flat-button matStepperPrevious color="primary">Back</button>
-                    <button mat-flat-button matStepperNext color="primary">Next</button>
+                    <button mat-flat-button matStepperNext color="primary" [disabled]="!getProjectIncludes.valid">Next</button>
                 </div>
             </mat-step>
             <!-- step 5  -->
@@ -224,17 +224,16 @@
                 <ng-template matStepLabel>Project out your Dates</ng-template>
                 <form [formGroup]="projectForm" class="five-page">
                     <h2>Date</h2>
-                    <mat-form-field appearance="fill" class="example-full-width">
-                        <mat-label>Project Name</mat-label>
-                        <mat-select formControlName="projectName" (selectionChange)="projectNameFunction($event)">
-                            <mat-option *ngFor="let food of foods" [value]="food.value">
-                                {{food.viewValue}}
-                            </mat-option>
-                        </mat-select>
-                        <mat-error *ngIf="this.projectForm.get('projectName')?.hasError('required')">
-                            Please select an activity from the list
-                        </mat-error>
-                    </mat-form-field>
+                    <div formGroupName="projectDetails">
+                        <mat-form-field class="example-full-width" appearance="fill">
+                            <mat-label>Title</mat-label>
+                            <input matInput formControlName="title">
+                            <mat-error *ngIf="projectForm.get('projectDetails.title')?.invalid ">
+                                <span *ngIf="projectForm.get('projectDetails.title')?.errors?.['required']">Enter Title </span>
+                                <span *ngIf="projectForm.get('projectDetails.title')?.errors?.['spacesOnly'] && !projectForm.get('projectDetails.title')?.errors?.['required']">Title cannot be only spaces.</span>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
                     <div formArrayName="projectDate">
                         <div *ngFor="let cost of getProjectDate.controls;let i=index" [formGroupName]="i" class="date-fild cost-fild">
                             <mat-form-field appearance="fill">
@@ -256,9 +255,9 @@
                 </form>
                 <div class="next-step-button">
                     <button mat-flat-button matStepperPrevious color="primary">Back</button>
-                    <button mat-flat-button (click)="submit()" color="primary" type="button" [disabled]="!this.projectForm.valid">Finish</button>
+                    <button mat-flat-button (click)="submit()" color="primary" type="button" [disabled]="!this.projectForm.valid">{{submitText}}</button>
                 </div>
             </mat-step>
-        </mat-stepper>
+        </mat-horizontal-stepper>
     </mat-card>
 </div>

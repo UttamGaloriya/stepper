@@ -1,0 +1,16 @@
+import { Component } from '@angular/core';
+import { ProjectData } from 'src/app/project-data';
+import { ProjectService } from 'src/app/services/project.service';
+
+@Component({
+  selector: 'app-list',
+  templateUrl: './list.component.html',
+  styleUrls: ['./list.component.scss']
+})
+export class ListComponent {
+  projects: ProjectData[] | undefined
+  constructor(private projectService: ProjectService) { }
+  ngOnInit() {
+    this.projects = this.projectService.getAllProject()
+  }
+}

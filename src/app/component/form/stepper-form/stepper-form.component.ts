@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { MatStepper } from '@angular/material/stepper';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ProjectService } from 'src/app/services/project.service';
 
 @Component({
   selector: 'app-stepper-form',
@@ -8,6 +10,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./stepper-form.component.scss']
 })
 export class StepperFormComponent {
+  @ViewChild('stepper') stepper!: MatStepper;
+  submitText: string = 'FINISH'
   projectForm!: FormGroup;
   projectDetailsForm!: FormGroup;
   reader = new FileReader();
@@ -17,11 +21,18 @@ export class StepperFormComponent {
     { value: 'pizza-1', viewValue: 'Pizza' },
     { value: 'tacos-2', viewValue: 'Tacos' }
   ];
-
-  constructor(private fb: FormBuilder, private router: Router) { }
+  ProjectId!: number
+  constructor(private fb: FormBuilder,
+    private router: Router,
+    private projectService: ProjectService,
+    private activeRoute: ActivatedRoute) {
+    let id = this.activeRoute.snapshot.params['id'];
+    this.ProjectId = parseInt(id)
+  }
 
   ngOnInit() {
     this.myForm()
+    this.formValue()
   }
   myForm() {
     this.projectForm = this.fb.group(
@@ -44,6 +55,24 @@ export class StepperFormComponent {
         projectIncludes: this.fb.array([this.projectIncludes()]),
         projectDate: this.fb.array([this.projectDate()])
       });
+  }
+  formValue() {
+    if (this.ProjectId >= 0) {
+      let data = this.projectService.getUser(this.ProjectId)
+      console.log(data)
+      for (let i = 1; i < data.projectCost.length; i++) {
+        this.addProjectCost()
+      }
+      for (let i = 1; i < data.projectIncludes.length; i++) {
+        this.addProjectIncludes()
+      }
+      for (let i = 1; i < data.projectDate.length; i++) {
+        this.addProjectDate()
+      }
+      this.projectForm.patchValue(data)
+      this.image = data.projectFile
+      this.submitText = "UPDATE"
+    }
   }
   get getProjectDetails() {
     return this.projectForm.get('projectDetails') as FormGroup;
@@ -116,9 +145,14 @@ export class StepperFormComponent {
   }
 
   submit() {
-    console.log("Submitted");
-    // this.userService.addProjectData(this.projectForm.value)
-    console.log(this.projectForm.value)
+
+    if (this.ProjectId >= 0) {
+      alert(`New Project with Id ${this.ProjectId} added successfully`)
+      this.projectService.updateProject(this.projectForm.value, this.ProjectId)
+    } else {
+      console.log("Submitted");
+      this.projectService.addProjectData(this.projectForm.value)
+    }
     this.router.navigateByUrl('/list')
   }
 
@@ -147,5 +181,15 @@ export class StepperFormComponent {
   removeImg(i: number) {
     this.image.splice(i, 1)
     this.projectForm.get('projectFile')?.setValue(this.image)
+  }
+
+  changeStep(event: any) {
+    console.log(event);
+    let value = this.getProjectDetails.get('title')?.value
+    console.log(value)
+    this.getProjectDetails.get('title')?.disable()
+    if (event.selectedIndex == 0) {
+      this.getProjectDetails.get('title')?.enable()
+    }
   }
 }
