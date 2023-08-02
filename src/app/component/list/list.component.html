@@ -3,9 +3,8 @@
         <mat-list-item *ngFor="let project of projects ,let i=index">
             <span matListItemIcon class="span-icon">{{i+1}}</span>
             <div matListItemTitle>
-                <span>{{project.projectName}}</span>
+                <span>{{project.projectDetails.title}}</span>
             </div>
-            <div matListItemLine>other</div>
             <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu" class="menu-list">
                 <mat-icon>more_vert</mat-icon>
             </button>
@@ -17,8 +16,8 @@
             </mat-menu>
         </mat-list-item>
     </mat-list>
+    <a mat-raised-button routerLink="/form" color="accent">Open Form</a>
     <div *ngIf="projects==undefined">
         <h3>List are empty</h3>
-        <a mat-raised-button routerLink="/form">Open Form</a>
     </div>
 </mat-card>

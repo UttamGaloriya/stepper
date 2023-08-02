@@ -9,7 +9,6 @@ export interface ProjectData {
         maximum: number,
         description: string,
     },
-    projectName: string,
     projectFile: Array<{}>,
     projectCost: Array<{
         cost: number;

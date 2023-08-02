@@ -1,3 +1,4 @@
+import { trigger } from '@angular/animations';
 import { Component, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
@@ -12,7 +13,8 @@ import { ProjectService } from 'src/app/services/project.service';
 export class StepperFormComponent {
   @ViewChild('stepper') stepper!: MatStepper;
   submitText: string = 'FINISH'
-  titleText: string = 'dfsg'
+  titleText: string = ''
+  titleIndex: number = 0
   projectForm!: FormGroup;
   projectDetailsForm!: FormGroup;
   reader = new FileReader();
@@ -35,6 +37,7 @@ export class StepperFormComponent {
     this.myForm()
     this.formValue()
   }
+
   myForm() {
     this.projectForm = this.fb.group(
       {
@@ -46,7 +49,6 @@ export class StepperFormComponent {
           minimum: ['', Validators.required],
           maximum: ['', Validators.required],
           description: ['', Validators.required],
-
         }, {
           validator: this.ageValidator('minimum', 'maximum')
         }),
@@ -56,6 +58,7 @@ export class StepperFormComponent {
         projectDate: this.fb.array([this.projectDate()])
       });
   }
+
   formValue() {
     if (this.ProjectId >= 0) {
       let data = this.projectService.getUser(this.ProjectId)
@@ -74,17 +77,16 @@ export class StepperFormComponent {
       this.submitText = "UPDATE"
     }
   }
+
   get getProjectDetails() {
     return this.projectForm.get('projectDetails') as FormGroup;
   }
+
   get getFileName() {
-    let file = this.projectForm.get('projectFile')?.value.name
-    if (file == 'required') {
-      return true
-    }
-    return false
+    if (this.image.length == 0) { return true } return false
   }
-  //project 
+
+
   projectCost() {
     return this.fb.group({
       cost: ['', [Validators.required]],
@@ -100,7 +102,7 @@ export class StepperFormComponent {
   removeProjectCost(index: number) {
     this.getProjectCost.removeAt(index)
   }
-  //
+
   projectIncludes() {
     return this.fb.group({
       description: ['', [Validators.required, this.validateString]],
@@ -116,7 +118,7 @@ export class StepperFormComponent {
   removeProjectIncludes(index: number) {
     this.getProjectIncludes.removeAt(index)
   }
-  //myDate
+
   projectDate() {
     return this.fb.group({
       date: ['', Validators.required]
@@ -125,11 +127,9 @@ export class StepperFormComponent {
   get getProjectDate() {
     return this.projectForm.controls['projectDate'] as FormArray
   }
-
   addProjectDate() {
     this.getProjectDate.push(this.projectDate())
   }
-
   removeProjectDate(index: number) {
     this.getProjectDate.removeAt(index)
   }
@@ -150,9 +150,7 @@ export class StepperFormComponent {
 
 
   submit() {
-
     if (this.ProjectId >= 0) {
-      this.getProjectDetails.get('title')?.enable()
       alert(`New Project with Id ${this.ProjectId} added successfully`)
       this.projectService.updateProject(this.projectForm.value, this.ProjectId)
     } else {
@@ -162,7 +160,6 @@ export class StepperFormComponent {
     this.router.navigateByUrl('/list')
   }
 
-
   validateString(control: FormControl) {
     const trimmedValue = control.value.trim();
     if (trimmedValue === '') {
@@ -170,6 +167,7 @@ export class StepperFormComponent {
     }
     return null;
   }
+
   ageValidator(controlName: string, matchingControlName: string) {
     return (formGroup: FormGroup) => {
       const control = formGroup.controls[controlName];
@@ -184,6 +182,7 @@ export class StepperFormComponent {
       }
     }
   }
+
   removeImg(i: number) {
     this.image.splice(i, 1)
     this.projectForm.get('projectFile')?.setValue(this.image)
@@ -191,14 +190,7 @@ export class StepperFormComponent {
 
   changeStep(event: any) {
     this.titleText = this.getProjectDetails.get('title')?.value
-    this.getProjectDetails.get('title')?.setValue(this.titleText)
-    this.titleText = this.getProjectDetails.get('title')?.value
-    console.log(event)
-    console.log(this.projectForm.get('projectFile'))
-    this.getProjectDetails.get('title')?.disable()
-    if (event.selectedInde == 0) {
-      this.getProjectDetails.get('title')?.enable()
-    }
+    this.titleIndex = event.selectedIndex
   }
 
 }

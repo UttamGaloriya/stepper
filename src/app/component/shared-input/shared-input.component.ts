@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -9,11 +9,8 @@ import { FormControl } from '@angular/forms';
 export class SharedInputComponent {
   title: any
   @Input() titleName: string = ''
-
-  constructor() {
-
-  }
   ngOnInit() {
-    this.title = new FormControl(this.titleName)
+    this.title = new FormControl({ value: this.titleName, disabled: true })
   }
+
 }
