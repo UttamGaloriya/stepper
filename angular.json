@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/stepper",
+            "outputPath": "dist/stepper/browser",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -99,6 +99,60 @@
             ],
             "scripts": []
           }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/stepper/server",
+            "main": "server.ts",
+            "tsConfig": "tsconfig.server.json",
+            "inlineStyleLanguage": "scss"
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media"
+            },
+            "development": {
+              "optimization": false,
+              "sourceMap": true,
+              "extractLicenses": false,
+              "vendorChunk": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "configurations": {
+            "development": {
+              "browserTarget": "stepper:build:development",
+              "serverTarget": "stepper:server:development"
+            },
+            "production": {
+              "browserTarget": "stepper:build:production",
+              "serverTarget": "stepper:server:production"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "prerender": {
+          "builder": "@nguniversal/builders:prerender",
+          "options": {
+            "routes": [
+              "/"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "stepper:build:production",
+              "serverTarget": "stepper:server:production"
+            },
+            "development": {
+              "browserTarget": "stepper:build:development",
+              "serverTarget": "stepper:server:development"
+            }
+          },
+          "defaultConfiguration": "production"
         }
       }
     }

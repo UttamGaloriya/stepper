@@ -8,8 +8,9 @@ import { ProjectService } from 'src/app/services/project.service';
   styleUrls: ['./list.component.scss']
 })
 export class ListComponent {
-  projects: ProjectData[] | undefined
-  constructor(private projectService: ProjectService) { }
+  projects!: ProjectData[]
+  constructor(private projectService: ProjectService) {
+  }
   ngOnInit() {
     this.projects = this.projectService.getAllProject()
   }

@@ -18,7 +18,7 @@ import { SharedInputComponent } from './component/shared-input/shared-input.comp
     SharedInputComponent
   ],
   imports: [
-    BrowserModule,
+    BrowserModule.withServerTransition({ appId: 'serverApp' }),
     AppRoutingModule,
     BrowserAnimationsModule,
     MaterialModule,

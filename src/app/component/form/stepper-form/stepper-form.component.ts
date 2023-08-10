@@ -36,6 +36,7 @@ export class StepperFormComponent {
   ngOnInit() {
     this.myForm()
     this.formValue()
+
   }
 
   myForm() {

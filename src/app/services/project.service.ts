@@ -1,14 +1,10 @@
 import { Injectable } from '@angular/core';
 import { ProjectData } from '../project-data';
-import { getLocaleTimeFormat } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectService {
-
-  constructor() { }
-
 
   ProjectId() {
     let project = localStorage.getItem('project')
@@ -34,7 +30,6 @@ export class ProjectService {
       projectList.push(data)
       localStorage.setItem('project', JSON.stringify(projectList))
     } else {
-      const newArray = [] as ProjectData[]
       data['id'] = this.ProjectId();
       localStorage.setItem('project', JSON.stringify([data]));
     }
@@ -67,7 +62,6 @@ export class ProjectService {
 
   getAllProject() {
     let projects = localStorage.getItem("project")
-    //console.log(`projects ${JSON.parse(projects)}`)
     if (projects != null) {
       let projectList = JSON.parse(projects)
       return projectList
